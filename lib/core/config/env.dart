@@ -8,12 +8,13 @@ class Env {
   static String get supabaseAnonKey => dotenv.get('SUPABASE_ANON_KEY', fallback: '');
 
   static String get backendUrl {
-    final raw = dotenv.get('BACKEND_URL', fallback: 'http://localhost:3000');
+    final raw = dotenv.get('BACKEND_URL', fallback: 'http://localhost:3000').trim();
+    final sanitized = raw.endsWith('/') ? raw.substring(0, raw.length - 1) : raw;
     // On Android emulators, 10.0.2.2 connects to host machine's localhost
-    if (!kIsWeb && defaultTargetPlatform == TargetPlatform.android && raw.contains('localhost')) {
-      return raw.replaceAll('localhost', '10.0.2.2');
+    if (!kIsWeb && defaultTargetPlatform == TargetPlatform.android && sanitized.contains('localhost')) {
+      return sanitized.replaceAll('localhost', '10.0.2.2');
     }
-    return raw;
+    return sanitized;
   }
 
   static String get stripePublishableKey =>
